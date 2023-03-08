@@ -17,17 +17,24 @@ function Profile() {
       };
     }, []);
 
-    return (
-        <div>
-        <img src={ecommind} alt="ecommind" className={styles.logo2}/>
-        <div className={styles.container}>
-            <h1>Profile</h1>
-            <p>Here is your profile information:</p>
-            <p>Name: {user.displayName}</p>
-            <p>Email: {user.email}</p>
-        </div>
-        </div>
-    )
+
+    if (user) {
+        // User is signed in
+        return (
+            <div>
+            <img src={ecommind} alt="ecommind" className={styles.logo2}/>
+            <div className={styles.container}>
+                <h1>Profile</h1>
+                <p>Here is your profile information:</p>
+                <p>Name: {user.displayName}</p>
+                <p>Email: {user.email}</p>
+            </div>
+            </div>
+        )
+      } else {
+        // User is not signed in
+        return <div>Please sign in</div>;
+      }
 }
 
 export default Profile
