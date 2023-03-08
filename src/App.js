@@ -4,7 +4,10 @@ import Landing from './pages/pages/Landing';
 
 function App() {
   return (
-    <Landing />
+    <div className='App'>
+      <Landing />
+    </div>
+    
   );
 }
 
