@@ -24,7 +24,7 @@ const Signup = () => {
     setButtonClicked(true);
 
     // go to Home page
-    window.location.href = '/home';
+    window.location.href = '/VerifyEmail';
   };
 
   return (
