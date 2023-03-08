@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import ecommind from '../assets/ecommind.png'
 import styles from '../styles/Login.module.css'
 import { Link } from 'react-router-dom';
+import { auth } from '../../firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 function Login() {
@@ -13,10 +15,25 @@ function Login() {
       email: email,
       password: password,
     }
-    setEmail('');
-    setPassword('');
-    // go to Home page
-    window.location.href = '/home';
+
+    // sign in with firebase auth
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      var user = userCredential.user;
+      console.log('User credentials:', userCredential);
+      console.log('User:', user);
+    }).catch((error) => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log('Error:', error);
+      console.log('Error code:', errorCode);
+      console.log('Error message:', errorMessage);
+    })
+    .then(() => {
+      // go to Home page
+      window.location.href = '/home';
+    });
   };
 
   return (
