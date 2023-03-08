@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import ecommind from '../assets/ecommind.png'
 import styles from '../styles/Signup.module.css'
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
+import { useNavigate } from 'react-router-dom';
  
 const Signup = () => {
   const [name, setName] = useState('');
@@ -12,45 +13,42 @@ const Signup = () => {
   const [confirmPassword, setconfirmPassword] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
+  const nav = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setPasswordsMatch(password === confirmPassword);
-    if (passwordsMatch) {
-      handleSubmit2(event);
-    }else{
-      alert("Passwords do not match");
+    if (password === confirmPassword) {
+      setButtonClicked(true);
+      const data = {
+        email: email,
+        name: name,
+        password: password,
+        confirmPassword: confirmPassword
+      };
+      // sign in with firebase auth
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+          // Signed in
+          var user = userCredential.user;
+          console.log(user);
+          await updateProfile(user, {
+            displayName: name
+          })
+
+          nav('/Home');
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(error);
+        });
+      setName('');
+      setEmail('');
+      setPassword('');
+      setconfirmPassword('');
+    } else {
+      alert('Passwords do not match');
     }
-  };
-
-  const handleSubmit2 = (event) => {
-    event.preventDefault();
-    const data = {
-      email: email,
-      name: name,
-      password: password,
-      confirmPassword: confirmPassword
-    }
-    // sign in with firebase auth
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      var user = userCredential.user;
-      // ...
-    }).catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log(error)
-    });
-
-    setName('');
-    setEmail('');
-    setPassword('');
-    setconfirmPassword('');
-    setButtonClicked(true);
-
-    // go to Home page
-    window.location.href = '/VerifyEmail';
   };
 
   return (

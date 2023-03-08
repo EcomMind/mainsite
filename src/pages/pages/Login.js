@@ -4,11 +4,13 @@ import styles from '../styles/Login.module.css'
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const nav = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
@@ -23,6 +25,7 @@ function Login() {
       var user = userCredential.user;
       console.log('User credentials:', userCredential);
       console.log('User:', user);
+      nav('/Home')
     }).catch((error) => {
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -30,10 +33,7 @@ function Login() {
       console.log('Error code:', errorCode);
       console.log('Error message:', errorMessage);
     })
-    .then(() => {
-      // go to Home page
-      window.location.href = '/home';
-    });
+
   };
 
   return (

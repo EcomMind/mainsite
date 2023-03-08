@@ -12,6 +12,7 @@ import Signup from './pages/pages/Signup';
 import ForgotPassword from './pages/pages/ForgotPassword';
 import Home from './pages/pages/Home';
 import VerifyEmail from './pages/pages/VerifyEmail';
+import Profile from './pages/pages/Profile';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "VerifyEmail",
     element: <VerifyEmail/>
+  },
+  {
+    path: "Profile",
+    element: <Profile/>
   },
 ]);
 

@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import ecommind from '../assets/ecommind.png'
-import styles from '../styles/Signup.module.css'
+import styles from '../styles/Home.module.css'
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 
 function Home() {
-    
-    const [name, setName] = useState(null);
+    const [user, setUser] = useState(null);
+
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                setName(user.displayName);
-            } else {
-                setName(null);
-            }
-        });
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        setUser(user);
+      });
+  
+      return () => {
+        unsubscribe();
+      };
     }, []);
-  return (
-    <div>
-        {name ? <p>Signed in</p> : <p>Not signed in</p>}
-    </div>
-  )
+  
+    if (user) {
+      // User is signed in
+      return <div>Welcome, {user.displayName}</div>;
+    } else {
+      // User is not signed in
+      return <div>Please sign in</div>;
+    }
 }
 
 export default Home
