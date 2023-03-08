@@ -22,6 +22,9 @@ const Signup = () => {
     setPassword('');
     setconfirmPassword('');
     setButtonClicked(true);
+
+    // go to Home page
+    window.location.href = '/home';
   };
 
   return (
@@ -70,9 +73,7 @@ const Signup = () => {
             onChange={(event) => setconfirmPassword(event.target.value)}
           />
         </label>
-        <Link to='/Home'>
-          <button className={styles.button} type="submit" onClick={handleSubmit}>Submit</button>
-        </Link>
+        <button className={styles.button} type="submit" onClick={handleSubmit}>Sign up</button>
     </form>
     <hr />
     <button className={styles.button} type="submit" onClick={handleSubmit}>Signup with Google</button>
