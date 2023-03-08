@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import ecommind from '../assets/ecommind.png'
 import styles from '../styles/Signup.module.css'
 import { Link } from 'react-router-dom';
-
+import { auth } from '../../firebase';
+ 
 const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setconfirmPassword] = useState('');
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
+
   const handleSubmit = (event) => {
+    event.preventDefault();
+    setPasswordsMatch(password === confirmPassword);
+    if (passwordsMatch) {
+      handleSubmit2(event);
+    }else{
+      alert("Passwords do not match");
+    }
+  };
+
+  const handleSubmit2 = (event) => {
     event.preventDefault();
     const data = {
       email: email,
@@ -17,6 +31,18 @@ const Signup = () => {
       password: password,
       confirmPassword: confirmPassword
     }
+    // sign in with firebase auth
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      var user = userCredential.user;
+      // ...
+    }).catch((error) => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(error)
+    });
+
     setName('');
     setEmail('');
     setPassword('');
