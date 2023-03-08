@@ -77,7 +77,6 @@ const Signup = () => {
     </form>
     <hr />
     <button className={styles.button} type="submit" onClick={handleSubmit}>Signup with Google</button>
-    <button className={styles.button} type="submit" onClick={handleSubmit}>Signup with Facebook</button>
     <h3 className={styles.footer}>Already have an account? <Link to='/Login' className={styles.link}>Login</Link></h3>
     </div>
     </div>

@@ -51,7 +51,6 @@ function Login() {
     </form>
     <hr />
     <button className={styles.button} type="submit" onClick={handleSubmit}>Signin with Google</button>
-    <button className={styles.button} type="submit" onClick={handleSubmit}>Signin with Facebook</button>
     <h3 className={styles.footer}>Dont Have an Account? <Link to='/Signup' className={styles.link}>Sign Up!</Link></h3>
     <h3 className={styles.footer}>Forgot Your Password? <Link to='/Forgotpassword' className={styles.link}>Reset it here</Link></h3>
     </div>
