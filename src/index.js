@@ -7,11 +7,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Login from './pages/pages/Login';
-import Signup from './pages/pages/Signup';
+import Login from './pages/pages/auth/Login';
+import Signup from './pages/pages/auth/Signup';
 import ForgotPassword from './pages/pages/ForgotPassword';
 import Home from './pages/pages/Home';
-import VerifyEmail from './pages/pages/VerifyEmail';
+import VerifyEmail from './pages/pages/auth/VerifyEmail';
 import Profile from './pages/pages/Profile';
 
 const router = createBrowserRouter([

@@ -1,6 +1,6 @@
 import React from 'react'
-import ecommind from '../assets/ecommind.png'
-import styles from '../styles/Login.module.css'
+import ecommind from '../../assets/ecommind.png'
+import styles from '../../styles/Login.module.css'
 import { Link } from 'react-router-dom';
 
 

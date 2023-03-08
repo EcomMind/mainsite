@@ -1,6 +1,6 @@
 import React from 'react'
-import ecommind from '../assets/ecommind.png'
-import styles from '../styles/Landing.module.css'
+import ecommind from '../../assets/ecommind.png'
+import styles from '../../styles/Landing.module.css'
 import TypingText from './Typewriter'
 import { Link } from 'react-router-dom';
 

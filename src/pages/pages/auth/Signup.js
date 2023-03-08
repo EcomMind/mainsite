@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import ecommind from '../assets/ecommind.png'
-import styles from '../styles/Signup.module.css'
+import ecommind from '../../assets/ecommind.png'
+import styles from '../../styles/Signup.module.css'
 import { Link } from 'react-router-dom';
-import { auth } from '../../firebase';
+import { auth } from '../../../firebase';
 import { useNavigate } from 'react-router-dom';
  
 const Signup = () => {

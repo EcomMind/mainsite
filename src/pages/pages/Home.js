@@ -21,12 +21,14 @@ function Home() {
       // User is signed in
       return (
         <div>
-        <img src={ecommind} alt="ecommind" className={styles.logo2}/>
-        <div className={styles.container}>
+          <div className={styles.header}>
+            <img src={ecommind} alt="ecommind" className={styles.logo2}/>
+            <Link to="/Profile">Profile</Link>
+          </div>
+          <div className={styles.container}>
             <h1>Home</h1>
             <p>Welcome to the home page, <span>{user.displayName}</span></p>
-        </div>
-        <Link to="/Profile">Profile</Link>
+          </div>
         </div>
     )
     } else {
