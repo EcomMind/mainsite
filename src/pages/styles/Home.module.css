@@ -1,0 +1,32 @@
+.logo {
+    width: 20%;
+    margin: auto; /* Center horizontally */
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  .links{
+    padding-right: 5%;
+    justify-content: space-between;
+  }
+
+.title{
+    font-family: 'Golos Text', sans-serif;
+    font-size: 3rem;
+    font-weight: 400;
+    /* color: #5e17eb; */
+    text-align: center;
+    margin-top: 5%;
+    padding-right: 20%;
+    padding-left: 20%;
+}
+
+.userName{
+    color: #5e17eb;
+}

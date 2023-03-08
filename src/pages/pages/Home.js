@@ -22,12 +22,24 @@ function Home() {
       return (
         <div>
           <div className={styles.header}>
-            <img src={ecommind} alt="ecommind" className={styles.logo2}/>
-            <Link to="/Profile">Profile</Link>
+            <Link to ='/Aboutus'>
+              <button className={styles.button}>About Us</button>
+            </Link>
+            <Link to ='/Pricing'>
+              <button className={styles.button}>Pricing</button>
+            </Link>
+            <Link to ='/Contactus'>
+              <button className={styles.button}>Contact Us</button>
+            </Link>
+            <img src={ecommind} alt="ecommind" className={styles.logo}/>
+            <Link to="/Profile">
+              <button className={styles.button}>Profile</button>
+            </Link>
           </div>
-          <div className={styles.container}>
-            <h1>Home</h1>
-            <p>Welcome to the home page, <span>{user.displayName}</span></p>
+          <hr/>
+          <div className={styles.main}>
+            <h1 className={styles.title}>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
+  
           </div>
         </div>
     )

@@ -13,6 +13,10 @@ import ForgotPassword from './pages/pages/ForgotPassword';
 import Home from './pages/pages/Home';
 import VerifyEmail from './pages/pages/auth/VerifyEmail';
 import Profile from './pages/pages/Profile';
+import Temp from './pages/pages/Temp';
+import AboutUs from './pages/pages/AboutUs';
+import Pricing from './pages/pages/Pricing';
+import ContactUs from './pages/pages/ContactUs';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +46,22 @@ const router = createBrowserRouter([
   {
     path: "Profile",
     element: <Profile/>
+  },
+  {
+    path: "Temp",
+    element: <Temp/>
+  },
+  {
+    path: "Aboutus",
+    element: <AboutUs/>
+  },
+  {
+    path: "Pricing",
+    element: <Pricing/>
+  },
+  {
+    path: "Contactus",
+    element: <ContactUs/>
   },
 ]);
 
