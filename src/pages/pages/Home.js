@@ -2,56 +2,121 @@ import React, { useEffect, useState } from 'react';
 import ecommind from '../assets/ecommind.png'
 import styles from '../styles/Home.module.css'
 import { Link } from 'react-router-dom';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
+import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
 
 function Home() {
-    const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const collectionRef = collection(db, 'projects');
 
-    useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        setUser(user);
-      });
-  
-      return () => {
-        unsubscribe();
-      };
-    }, []);
-  
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setUser(user);
+      if (user) {
+        // get the projects for the current user
+        // collection(db, 'projects').where('userId', '==', user.uid).get()
+        //   .then((querySnapshot) => {
+        //     const data = querySnapshot.docs.map((doc) => ({
+        //       id: doc.id,
+        //       ...doc.data(),
+        //     }));
+        //     setProjects(data);
+        //   });
+        if(collection){
+          const q = query(collection(collectionRef, 'projects'), where('userId', '==', user.uid));
+          await getDocs(q)
+          .then((querySnapshot) => {
+            // map the documents in the snapshot to an array of project objects
+            const data = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            // set the projects state with the array of project objects
+            setProjects(data);
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+        }
+        
+      } else {
+        setProjects([]);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
+
+  const handleCreateProject = async () => {
     if (user) {
-      // User is signed in
-      return (
-        <div>
-          <div className={styles.header}>
-            <Link to ='/Aboutus'>
-              <button className={styles.button}>About Us</button>
-            </Link>
-            <Link to ='/Pricing'>
-              <button className={styles.button}>Pricing</button>
-            </Link>
-            <Link to ='/Contactus'>
-              <button className={styles.button}>Contact Us</button>
-            </Link>
-            <img src={ecommind} alt="ecommind" className={styles.logo}/>
-            <Link to="/Profile">
-              <button className={styles.button}>Profile</button>
-            </Link>
-          </div>
-          <hr/>
-          <div className={styles.main}>
-            <h1 className={styles.title}>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
-  
-          </div>
-        </div>
-    )
-    } else {
-      // User is not signed in
-      return <div>Please sign in</div>;
+      // create a new project for the current user
+      if(collection){
+
+        await addDoc(collectionRef, {
+          userId: user.uid,
+          projectName: 'New Project',
+        })
+          // .then(async (docRef) => {
+          //   // add a new subproject to the project
+          //   await addDoc(collection(db, 'projects').doc(docRef.id).collection('subprojects'), {
+          //       subprojectName: 'New Subproject',
+          //       content: '',
+          //     });
+          // })
+          // .catch((error) => {
+          //   console.error('Error adding document: ', error);
+          // });
+      }
     }
+  };
 
-
-    
-
-
+  if (user) {
+    // User is signed in
+    return (
+      <div>
+        <div className={styles.header}>
+          <Link to ='/Aboutus'>
+            <button className={styles.button}>About Us</button>
+          </Link>
+          <Link to ='/Pricing'>
+            <button className={styles.button}>Pricing</button>
+          </Link>
+          <Link to ='/Contactus'>
+            <button className={styles.button}>Contact Us</button>
+          </Link>
+          <img src={ecommind} alt="ecommind" className={styles.logo}/>
+          <Link to="/Profile">
+            <button className={styles.button}>Profile</button>
+          </Link>
+        </div>
+        <hr/>
+        <div className={styles.main}>
+          <h1 className={styles.title}>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
+          {/* display projects */}
+          {projects.map((project) => (
+            <div key={project.id}>
+              <h2>{project.projectName}</h2>
+              {/* display subprojects */}
+              {/* {project.subprojects.map((subproject) => (
+                <div key={subproject.id}>
+                  <h3>{subproject.subprojectName}</h3>
+                  <p>{subproject.content}</p>
+                </div>
+              ))} */}
+            </div>
+          ))}
+          {/* button to create a new project */}
+          <button onClick={handleCreateProject}>Create New Project</button>
+        </div>
+      </div>
+    )
+  } else {
+    // User is not signed in
+    return <div>Please sign in</div>;
+  }
 }
 
-export default Home
+export default Home;
