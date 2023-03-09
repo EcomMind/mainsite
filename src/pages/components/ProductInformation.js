@@ -51,9 +51,6 @@ function ProductInformation() {
     });
     return () => unsubscribe();
     }, []);
-    
-
-  
 
   const handleSave = async (event) => {   
       event.preventDefault();
