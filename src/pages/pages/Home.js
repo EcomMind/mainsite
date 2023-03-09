@@ -4,11 +4,13 @@ import styles from '../styles/Home.module.css'
 import { Link } from 'react-router-dom';
 import { auth, db } from '../../firebase';
 import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const collectionRef = collection(db, 'projects');
+  const nav = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -53,29 +55,31 @@ function Home() {
             // await addDoc(collection(collectionRef, 'projects').doc(docRef.id).collection('subprojects'), {
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
                 subprojectName: 'Product Information',
-                content: '',
+                content: [],
               });
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
                 subprojectName: 'Website Generator',
-                content: '',
+                content: [],
               });
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
                 subprojectName: 'Advertising Generator',
-                content: '',
+                content: [],
               });
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
                 subprojectName: 'Social Media Content Generator',
-                content: '',
+                content: [],
               });
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
                 subprojectName: 'Email Marketing Generator',
-                content: '',
+                content: [],
               });
+            nav('/ProductInformation/' + docRef.id)
           })
           .catch((error) => {
             console.error('Error adding document: ', error);
           });
       }
+      
     }
   };
 

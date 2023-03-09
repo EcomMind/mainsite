@@ -5,6 +5,7 @@ import TypingText from './Typewriter'
 import { Link } from 'react-router-dom';
 
 function Landing() {
+
   return (
     <div className={styles.Landing}>
         <img src={ecommind} alt="ecommind" className={styles.logo}/>
