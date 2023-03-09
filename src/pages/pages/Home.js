@@ -86,9 +86,14 @@ function Home() {
         <div className={styles.main}>
           <h1 className={styles.title}>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
           {/* display projects */}
+                    
           {projects.map((project) => (
             <div key={project.id}>
-              <h2>{project.projectName}</h2>
+              <h2>
+                <Link to={`/ProjectDetails/${project.id}`}>
+                  {project.projectName}
+                </Link>
+              </h2>
             </div>
           ))}
           {/* button to create a new project */}

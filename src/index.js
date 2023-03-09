@@ -17,6 +17,7 @@ import Temp from './pages/pages/Temp';
 import AboutUs from './pages/pages/AboutUs';
 import Pricing from './pages/pages/Pricing';
 import ContactUs from './pages/pages/ContactUs';
+import ProjectDetails from './pages/components/ProjectDetails';
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
   {
     path: "Contactus",
     element: <ContactUs/>
+  },
+  {
+    path: "ProjectDetails/:projectId",
+    element: <ProjectDetails/>
   },
 ]);
 
