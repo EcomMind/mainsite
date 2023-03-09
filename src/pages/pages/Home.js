@@ -52,7 +52,23 @@ function Home() {
             // add a new subproject to the project
             // await addDoc(collection(collectionRef, 'projects').doc(docRef.id).collection('subprojects'), {
             await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
-                subprojectName: 'New Subproject',
+                subprojectName: 'Product Information',
+                content: '',
+              });
+            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+                subprojectName: 'Website Generator',
+                content: '',
+              });
+            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+                subprojectName: 'Advertising Generator',
+                content: '',
+              });
+            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+                subprojectName: 'Social Media Content Generator',
+                content: '',
+              });
+            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+                subprojectName: 'Email Marketing Generator',
                 content: '',
               });
           })
