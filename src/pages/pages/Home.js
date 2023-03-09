@@ -53,23 +53,23 @@ function Home() {
           .then(async (docRef) => {
             // add a new subproject to the project
             // await addDoc(collection(collectionRef, 'projects').doc(docRef.id).collection('subprojects'), {
-            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+            await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Product Information'), {
                 subprojectName: 'Product Information',
-                content: [],
+                content: ["", "", "", "", "", ""],
               });
-            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+            await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Website Generator'), {
                 subprojectName: 'Website Generator',
                 content: [],
               });
-            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+            await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Advertising Generator'), {
                 subprojectName: 'Advertising Generator',
                 content: [],
               });
-            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+            await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Social Media Content Generator'), {
                 subprojectName: 'Social Media Content Generator',
                 content: [],
               });
-            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+            await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Email Marketing Generator'), {
                 subprojectName: 'Email Marketing Generator',
                 content: [],
               });
@@ -110,7 +110,7 @@ function Home() {
           {projects.map((project) => (
             <div key={project.id}>
               <h2>
-                <Link to={`/ProjectDetails/${project.id}`}>
+                <Link to={`/ProductInformation/${project.id}`}>
                   {project.projectName}
                 </Link>
               </h2>
