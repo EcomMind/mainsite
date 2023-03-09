@@ -59,16 +59,17 @@ function Home() {
           userId: user.uid,
           projectName: 'New Project',
         })
-          // .then(async (docRef) => {
-          //   // add a new subproject to the project
-          //   await addDoc(collection(db, 'projects').doc(docRef.id).collection('subprojects'), {
-          //       subprojectName: 'New Subproject',
-          //       content: '',
-          //     });
-          // })
-          // .catch((error) => {
-          //   console.error('Error adding document: ', error);
-          // });
+          .then(async (docRef) => {
+            // add a new subproject to the project
+            // await addDoc(collection(collectionRef, 'projects').doc(docRef.id).collection('subprojects'), {
+            await addDoc(collection(collectionRef, docRef.id, 'subprojects'), {
+                subprojectName: 'New Subproject',
+                content: '',
+              });
+          })
+          .catch((error) => {
+            console.error('Error adding document: ', error);
+          });
       }
     }
   };
