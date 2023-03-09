@@ -14,37 +14,26 @@ function Home() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setUser(user);
       if (user) {
-        // get the projects for the current user
-        // collection(db, 'projects').where('userId', '==', user.uid).get()
-        //   .then((querySnapshot) => {
-        //     const data = querySnapshot.docs.map((doc) => ({
-        //       id: doc.id,
-        //       ...doc.data(),
-        //     }));
-        //     setProjects(data);
-        //   });
-        if(collection){
-          const q = query(collection(collectionRef, 'projects'), where('userId', '==', user.uid));
-          await getDocs(q)
-          .then((querySnapshot) => {
-            // map the documents in the snapshot to an array of project objects
-            const data = querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-            // set the projects state with the array of project objects
-            setProjects(data);
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
-        }
+        
+        const q = await query(collectionRef, where('userId', '==', user.uid));
+        await getDocs(q)
+        .then((querySnapshot) => {
+          // map the documents in the snapshot to an array of project objects
+          const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          // set the projects state with the array of project objects
+          setProjects(data);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
         
       } else {
         setProjects([]);
       }
     });
-
     return () => {
       unsubscribe();
     };
@@ -100,13 +89,6 @@ function Home() {
           {projects.map((project) => (
             <div key={project.id}>
               <h2>{project.projectName}</h2>
-              {/* display subprojects */}
-              {/* {project.subprojects.map((subproject) => (
-                <div key={subproject.id}>
-                  <h3>{subproject.subprojectName}</h3>
-                  <p>{subproject.content}</p>
-                </div>
-              ))} */}
             </div>
           ))}
           {/* button to create a new project */}
