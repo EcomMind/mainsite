@@ -3,8 +3,10 @@ import { collection, doc, updateDoc } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 import { onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
+import {v4} from 'uuid'
 
 function ProductInformation() {
   const { projectId } = useParams();
@@ -14,9 +16,10 @@ function ProductInformation() {
   const [projectDescription, setProjectDescription] = useState('');
   const [projectProductDescription, setProjectProductDescription] = useState('');
   const [subprojects, setSubprojects] = useState([]);
+  const [image, setImage] = useState(null);
+  const [imageurl, setImageurl] = useState('');
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
-
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(projectRef, 'subprojects'), (snapshot) => {
@@ -38,8 +41,6 @@ function ProductInformation() {
     return () => unsubscribe();
   }, []);
 
-  // useeffect function to get the subproject data, through the content array which looks like this:
-    // content: ["", "", "", "", ""]
   useEffect(() => {
     const unsubscribe = onSnapshot(productInformationSubProjectRef, (doc) => {  
         if (doc.exists()) {
@@ -47,6 +48,7 @@ function ProductInformation() {
             setProjectAudience(doc.data().content[1]);
             setProjectDescription(doc.data().content[2]);
             setProjectProductDescription(doc.data().content[3]);
+            setImageurl(doc.data().content[4]);
         }
     });
     return () => unsubscribe();
@@ -56,11 +58,32 @@ function ProductInformation() {
       event.preventDefault();
       try {
           await updateDoc(projectRef, { projectName: projectName });
-          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription] });
+          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl] });
       } catch (error) {
           console.error('Error updating document: ', error);
       }
   };  
+
+  const handleImageUpload = () => {
+    if(image == null) return;
+
+    if(image.size > 1000000) {
+        alert("Image size is too large");
+        return;
+    }
+    
+
+    const imagePath = `images/${image.name + v4()}`;
+    const imageRef = ref(storage, `${imagePath}`);
+    uploadBytes(imageRef, image).then(() => {
+        getDownloadURL(imageRef)
+        .then((url) => {
+            setImageurl(url);
+            console.log(imageurl);
+        })
+        alert("Image uploaded successfully");
+    })
+  }
 
   const projectLinks = {
     "Email Marketing Generator": "/Email/",
@@ -96,6 +119,11 @@ function ProductInformation() {
         </label>
         <button type="submit" onClick={handleSave}>Save</button>
       </form>
+      <input type="file" onChange={(event) => {setImage(event.target.files[0])}} />
+      <button onClick={handleImageUpload}>Upload</button>
+      <div>
+        {imageurl ? <img src={imageurl} alt=""/> : null}
+      </div>
       {subprojects.map((subproject) => (
         <div key={subproject.id}>
           <Link to={`${projectLinks[subproject.subprojectName]}${projectId}`}>{subproject.subprojectName}</Link>
