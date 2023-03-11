@@ -5,7 +5,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import {v4} from 'uuid'
 
 function ProductInformation() {
@@ -65,25 +65,48 @@ function ProductInformation() {
   };  
 
   const handleImageUpload = () => {
-    if(image == null) return;
+    if (image == null) return;
 
-    if(image.size > 1000000) {
-        alert("Image size is too large");
-        return;
+    if (image.size > 1000000) {
+      alert('Image size is too large');
+      return;
     }
-    
 
+    const storageRef = getStorage();
     const imagePath = `images/${image.name + v4()}`;
-    const imageRef = ref(storage, `${imagePath}`);
-    uploadBytes(imageRef, image).then(() => {
-        getDownloadURL(imageRef)
-        .then((url) => {
-            setImageurl(url);
-            console.log(imageurl);
+    const imageRef = ref(storageRef, imagePath);
+
+    // Delete the previously stored image
+    if (imageurl !== '') {
+      const previousImageRef = ref(storageRef, imageurl);
+      deleteObject(previousImageRef)
+        .then(() => {
+          console.log('Previous image deleted');
         })
-        alert("Image uploaded successfully");
-    })
-  }
+        .catch((error) => {
+          console.error('Error deleting previous image: ', error);
+        });
+    }
+
+    // Upload the new image
+    const uploadTask = uploadBytesResumable(imageRef, image);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // ...
+      },
+      (error) => {
+        console.error('Error uploading image: ', error);
+      },
+      () => {
+        getDownloadURL(imageRef).then((url) => {
+          setImageurl(url);
+          console.log(imageurl);
+          alert('Image uploaded successfully');
+        });
+      }
+    );
+  };
 
   const projectLinks = {
     "Email Marketing Generator": "/Email/",
