@@ -55,7 +55,7 @@ function Home() {
             // await addDoc(collection(collectionRef, 'projects').doc(docRef.id).collection('subprojects'), {
             await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Product Information'), {
                 subprojectName: 'Product Information',
-                content: ["", "", "", "", "", "", "", ""],
+                content: ["", "", "", "", "", "", ""],
               });
             await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Website Generator'), {
                 subprojectName: 'Website Generator',

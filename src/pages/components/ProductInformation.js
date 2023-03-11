@@ -5,7 +5,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 import {v4} from 'uuid'
 
 function ProductInformation() {
@@ -18,7 +18,6 @@ function ProductInformation() {
   const [subprojects, setSubprojects] = useState([]);
   const [image, setImage] = useState(null);
   const [imageurl, setImageurl] = useState('');
-  const [imagePath, setImagePath] = useState('');
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
 
@@ -43,22 +42,6 @@ function ProductInformation() {
   }, []);
 
   useEffect(() => {
-    if (imagePath) {
-      const imageRef = ref(storage, imagePath);
-      uploadBytes(imageRef, image).then(() => {
-        getDownloadURL(imageRef).then((url) => {
-          setImageurl(url);
-        });
-        alert("Image uploaded successfully");
-      }).catch((error) => {
-        console.error('Error uploading image: ', error);
-      });
-    }
-  }, [imagePath]);
-
-  
-
-  useEffect(() => {
     const unsubscribe = onSnapshot(productInformationSubProjectRef, (doc) => {  
         if (doc.exists()) {
             setProjectIndustry(doc.data().content[0]);
@@ -66,7 +49,6 @@ function ProductInformation() {
             setProjectDescription(doc.data().content[2]);
             setProjectProductDescription(doc.data().content[3]);
             setImageurl(doc.data().content[4]);
-            setImagePath(doc.data().content[5]);
         }
     });
     return () => unsubscribe();
@@ -76,42 +58,32 @@ function ProductInformation() {
       event.preventDefault();
       try {
           await updateDoc(projectRef, { projectName: projectName });
-          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl, imagePath] });
+          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl] });
       } catch (error) {
           console.error('Error updating document: ', error);
       }
   };  
 
-  const deleteCurrentImage = async () => {
-    console.log(imagePath)
-    const desertRef = ref(storage, imagePath);
-    await deleteObject(desertRef).then(() => {
-        console.log("Image deleted successfully");
-    }).catch((error) => {
-        console.log(error);
-    }
-    )
-  };
+  const handleImageUpload = () => {
+    if(image == null) return;
 
-
-  const handleImageUpload = async () => {
-    if (image == null) return;
-  
-    if (image.size > 1000000) {
-      alert("Image size is too large");
-      return;
+    if(image.size > 1000000) {
+        alert("Image size is too large");
+        return;
     }
-  
-    if (imagePath !== '') {
-      await deleteCurrentImage();
-    }
-  
-    const path = `images/${image.name + v4()}`;
-    setImagePath(path);
-    console.log(path);
-    alert("Image path set successfully");
-  };
+    
 
+    const imagePath = `images/${image.name + v4()}`;
+    const imageRef = ref(storage, `${imagePath}`);
+    uploadBytes(imageRef, image).then(() => {
+        getDownloadURL(imageRef)
+        .then((url) => {
+            setImageurl(url);
+            console.log(imageurl);
+        })
+        alert("Image uploaded successfully");
+    })
+  }
 
   const projectLinks = {
     "Email Marketing Generator": "/Email/",
