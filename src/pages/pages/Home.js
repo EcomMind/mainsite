@@ -63,7 +63,7 @@ function Home() {
               });
             await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Advertising Generator'), {
                 subprojectName: 'Advertising Generator',
-                content: [],
+                content: ["", "", "", "", "", "", ""],
               });
             await setDoc(doc(collectionRef, docRef.id, 'subprojects', 'Social Media Content Generator'), {
                 subprojectName: 'Social Media Content Generator',
