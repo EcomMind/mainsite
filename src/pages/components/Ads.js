@@ -21,6 +21,9 @@ function Ads() {
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
   const adsInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Advertising Generator');
+  let returnStatement = "";
+  let message = "";
+  let data2 = "";
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(projectRef, 'subprojects'), (snapshot) => {
@@ -54,15 +57,15 @@ function Ads() {
     return () => unsubscribe();
     }, []);
 
-    useEffect(() => {
-      const unsubscribe = onSnapshot(adsInformationSubProjectRef, (doc) => {  
-          if (doc.exists()) {
-              setProductDescriptionShort(doc.data().content[0]);
-              setProductDescriptionLong(doc.data().content[1]);
-          }
-      });
-      return () => unsubscribe();
-      }, []);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(adsInformationSubProjectRef, (doc) => {  
+        if (doc.exists()) {
+            setProductDescriptionShort(doc.data().content[0]);
+            setProductDescriptionLong(doc.data().content[1]);
+        }
+    });
+    return () => unsubscribe();
+    }, []);
 
   const handleSave = async (event) => {   
       event.preventDefault();
@@ -81,15 +84,39 @@ function Ads() {
     "Product Information": "/ProductInformation/"
   };
 
-  const handleButton1Click = () => {
-    setProductDescriptionShort('Text 1 rendered!');
+  const handleButton1Click = async () => {
+    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ".";
+    data2 = await processMessageToChatGPT(message, 100)
+    console.log(data2)
+    setProductDescriptionShort(data2);
   };
 
-  const handleButton2Click = () => {
-    setProductDescriptionLong('Text 2 rendered!');
+  const handleButton2Click = async () => {
+    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ".";
+    data2 = await processMessageToChatGPT(message, 300)
+    console.log(data2)
+    setProductDescriptionLong(data2);
   };
 
-  
+  async function processMessageToChatGPT(message, max_tokens){
+    // console.log(process.env.REACT_APP_gptkey)
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + process.env.REACT_APP_gptkey
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{role:'system', content:message}],
+        max_tokens: max_tokens,
+      })
+    });
+    const data = await response.json();
+    // console.log(data.choices[0].message.content);
+    return data.choices[0].message.content;
+  }
+
   return (
     <div>
       <h1>Project {projectName}</h1>
@@ -108,6 +135,7 @@ function Ads() {
             Render Text 2
           </button>
         </div>
+        <button type="submit" onClick={handleSave}/>
       </form>
       {subprojects.map((subproject) => (
         <div key={subproject.id}>
