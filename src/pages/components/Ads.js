@@ -20,7 +20,9 @@ function Ads() {
   const [subprojects, setSubprojects] = useState([]);
   const [imagePath, setImagePath] = useState('');
   const [image, setImage] = useState(null);
+  const [imageurl, setImageUrl] = useState('');
   const [imageNoBG, setImageNoBG] = useState(null);
+  const [imageNoBgUrl, setImageNoBgUrl] = useState('');
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
   const adsInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Advertising Generator');
@@ -66,6 +68,7 @@ function Ads() {
         if (doc.exists()) {
             setProductDescriptionShort(doc.data().content[0]);
             setProductDescriptionLong(doc.data().content[1]);
+            setImageUrl(doc.data().content[2]);
         }
     });
     return () => unsubscribe();
@@ -74,7 +77,7 @@ function Ads() {
   const handleSave = async (event) => {   
       event.preventDefault();
       try {
-          await updateDoc(adsInformationSubProjectRef, { content: [productDescriptionShort, productDescriptionLong] });
+          await updateDoc(adsInformationSubProjectRef, { content: [productDescriptionShort, productDescriptionLong, imageurl] });
       } catch (error) {
           console.error('Error updating document: ', error);
       }
@@ -123,14 +126,15 @@ function Ads() {
 
   const getImage = async () => {
     const storageRef = ref(storage, imagePath);
-    await getDownloadURL(storageRef).then((url) => {
+    await getDownloadURL(storageRef).then(async (url) => {
       // Download the file using fetch()
-      fetch(url)
+      await fetch(url)
         .then(response => response.blob())
         .then(blob => {
           // Use the file blob to display the image or download it
           setImage(blob);
           console.log('File blob:', blob);
+          sendImage();
         })
         .catch((error) => {
           console.error('Error downloading file:', error);
@@ -139,8 +143,97 @@ function Ads() {
     .catch((error) => {
       console.error('Error retrieving file URL:', error);
     });
+    
   }
+
+  const sendImage = async () => {
+    // Get the image file from state
+    const imageFile = image;
   
+    // Create a FormData object to send the file
+    const formData = new FormData();
+    formData.append('image', imageFile);
+  
+    // Set the API key in the headers
+    const headers = new Headers();
+    headers.append('Authorization', 'my-secret-key');
+  
+    // Send the POST request to the API
+    await fetch('http://localhost:5000/remove-background', {
+      method: 'POST',
+      headers: headers,
+      body: formData
+    })
+    .then(response => {
+      // Handle the response from the API
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      // Use the file blob to display the image or download it
+      setImageNoBG(blob);
+      console.log('API response blob:', blob);
+      handleImageUpload();
+    })
+    .catch(error => {
+      console.error('Error sending image to API:', error);
+    });
+
+    
+  }
+
+  
+  const handleImageUpload = () => {
+    console.log('Uploading image');
+    if (imageNoBG == null) return;
+
+    if (imageNoBG.size > 1000000) {
+      alert('Image size is too large');
+      return;
+    }
+
+    const storageRef = getStorage();
+    const imagePath = `images/${imageNoBG.name + v4()}`;
+    const imageRef = ref(storageRef, imagePath);
+
+    // Delete the previously stored image
+    if (imageNoBgUrl !== '') {
+      const previousImageRef = ref(storageRef, imageNoBgUrl);
+      deleteObject(previousImageRef)
+        .then(() => {
+          console.log('Previous image deleted');
+        })
+        .catch((error) => {
+          console.error('Error deleting previous image: ', error);
+        });
+    }
+
+    // Upload the new image
+    const uploadTask = uploadBytesResumable(imageRef, imageNoBG);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // ...
+      },
+      (error) => {
+        console.error('Error uploading image: ', error);
+      },
+      () => {
+        getDownloadURL(imageRef).then((url) => {
+          setImageNoBgUrl(url);
+          console.log(imageurl);
+          alert('Image uploaded successfully');
+        }).then(() => {
+          setImagePath(imagePath);
+        });
+      }
+    );
+  };
+
+
+
   return (
     <div>
       <h1>Project {projectName}</h1>
@@ -160,10 +253,13 @@ function Ads() {
           </button>
         </div>
         <button type="submit" onClick={handleSave}>save text</button>
-      
+
       </form>
       {/* a button with the text "get image" that calls the getImage function */}
       <button onClick={getImage}>Get Image</button>
+      <div>
+        {imageNoBgUrl ? <img src={imageNoBgUrl} alt=""/> : null}
+      </div>
       {subprojects.map((subproject) => (
         <div key={subproject.id}>
           <Link to={`${projectLinks[subproject.subprojectName]}${projectId}`}>{subproject.subprojectName}</Link>
