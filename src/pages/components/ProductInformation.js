@@ -17,6 +17,7 @@ function ProductInformation() {
   const [projectProductDescription, setProjectProductDescription] = useState('');
   const [subprojects, setSubprojects] = useState([]);
   const [image, setImage] = useState(null);
+  const [imagePath2, setImagePath] = useState('');
   const [imageurl, setImageurl] = useState('');
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
@@ -58,7 +59,7 @@ function ProductInformation() {
       event.preventDefault();
       try {
           await updateDoc(projectRef, { projectName: projectName });
-          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl] });
+          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl, imagePath2] });
       } catch (error) {
           console.error('Error updating document: ', error);
       }
@@ -103,6 +104,8 @@ function ProductInformation() {
           setImageurl(url);
           console.log(imageurl);
           alert('Image uploaded successfully');
+        }).then(() => {
+          setImagePath(imagePath);
         });
       }
     );

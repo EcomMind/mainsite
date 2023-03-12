@@ -18,6 +18,9 @@ function Ads() {
   const [productDescriptionShort, setProductDescriptionShort] = useState('');
   const [productDescriptionLong, setProductDescriptionLong] = useState('');
   const [subprojects, setSubprojects] = useState([]);
+  const [imagePath, setImagePath] = useState('');
+  const [image, setImage] = useState(null);
+  const [imageNoBG, setImageNoBG] = useState(null);
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
   const adsInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Advertising Generator');
@@ -52,6 +55,7 @@ function Ads() {
             setProjectAudience(doc.data().content[1]);
             setProjectDescription(doc.data().content[2]);
             setProjectProductDescription(doc.data().content[3]);
+            setImagePath(doc.data().content[4]);
         }
     });
     return () => unsubscribe();
@@ -117,6 +121,26 @@ function Ads() {
     return data.choices[0].message.content;
   }
 
+  const getImage = async () => {
+    const storageRef = ref(storage, imagePath);
+    await getDownloadURL(storageRef).then((url) => {
+      // Download the file using fetch()
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          // Use the file blob to display the image or download it
+          setImage(blob);
+          console.log('File blob:', blob);
+        })
+        .catch((error) => {
+          console.error('Error downloading file:', error);
+        });
+    })
+    .catch((error) => {
+      console.error('Error retrieving file URL:', error);
+    });
+  }
+  
   return (
     <div>
       <h1>Project {projectName}</h1>
@@ -135,8 +159,11 @@ function Ads() {
             Render Text 2
           </button>
         </div>
-        <button type="submit" onClick={handleSave}/>
+        <button type="submit" onClick={handleSave}>save text</button>
+      
       </form>
+      {/* a button with the text "get image" that calls the getImage function */}
+      <button onClick={getImage}>Get Image</button>
       {subprojects.map((subproject) => (
         <div key={subproject.id}>
           <Link to={`${projectLinks[subproject.subprojectName]}${projectId}`}>{subproject.subprojectName}</Link>
