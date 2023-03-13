@@ -67,13 +67,13 @@ function ProductInformation() {
 
   const handleImageUpload = () => {
     if (image == null) return;
-
+    console.log(image.size)
     if (image.size > 10000000) {
       alert('Image size is too large');
       return;
     }
     
-    if(image.size > 1000000){
+    if(image.size > 300000){
       console.log('Image size is too large, resizing...')
       resizeImage(image, 500, 500, 0.5).then((resizedImage) => {
         setImage(resizedImage);
@@ -155,8 +155,10 @@ function ProductInformation() {
             await resolve(new File([blob], file.name, { type: file.type, lastModified: file.lastModified }));
           }, file.type, quality);
         };
+        console.log(img.onerror)
         img.onerror = reject;
       };
+      console.log(reader.onerror)
       reader.onerror = reject;
     });
   }
