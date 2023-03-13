@@ -7,6 +7,7 @@ import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import {v4} from 'uuid'
+import styles from '../styles/Ads.module.css';
 
 function Ads() {
   const { projectId } = useParams();
@@ -95,15 +96,15 @@ function Ads() {
   };
 
   const handleButton1Click = async () => {
-    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ".";
-    data2 = await processMessageToChatGPT(message, 100)
+    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ". This should only be a short paragraph.";
+    data2 = await processMessageToChatGPT(message, 300)
     console.log(data2)
     setProductDescriptionShort(data2);
   };
 
   const handleButton2Click = async () => {
-    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ".";
-    data2 = await processMessageToChatGPT(message, 300)
+    message = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectDescription + ". The product description should include some of the following: " + projectProductDescription + ". The name of the product is " + projectName + ". This should be 2-3 longer paragraphs long.";
+    data2 = await processMessageToChatGPT(message, 500)
     console.log(data2)
     setProductDescriptionLong(data2);
   };
@@ -120,6 +121,8 @@ function Ads() {
         model: "gpt-3.5-turbo",
         messages: [{role:'system', content:message}],
         max_tokens: max_tokens,
+        n: 1,
+        
       })
     });
     const data = await response.json();
@@ -223,6 +226,16 @@ function Ads() {
     setBgColor(event.target.value);
   }
 
+  const divStyle = {
+    backgroundColor: bgColor,
+    display: "inline-block"
+  };
+
+  const imgStyle = {
+    display: "block",
+    margin: 0,
+    padding: 0
+  };
   
 
   // da return
@@ -247,10 +260,11 @@ function Ads() {
       </form>
       {/* a button with the text "get image" that calls the getImage function */}
       <button onClick={getImage}>Get Image</button>
-      <div style={{ backgroundColor: bgColor }}>
-        {imageNoBgUrl ? <img src={imageNoBgUrl} alt=""/> : null}
+      <br/>
+      <div style={divStyle}>
+        {imageNoBgUrl ? <img src={imageNoBgUrl} className={imgStyle} alt=""/> : null}
       </div>
-      
+      <br/>
       <select value={bgColor} onChange={handleBgColorChange}>
         {colors.map((color) => (
           <option key={color} value={color}>
