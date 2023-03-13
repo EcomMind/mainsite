@@ -65,25 +65,32 @@ function ProductInformation() {
       }
   };  
 
-  const handleImageUpload = () => {
-    if (image == null) return;
-    console.log(image.size)
+  const handleImageUpload = async () => {
+    if (!image) return;
+    console.log(image.size);
+  
     if (image.size > 10000000) {
       alert('Image size is too large');
       return;
     }
-    
-    if(image.size > 300000){
-      console.log('Image size is too large, resizing...')
-      resizeImage(image, 500, 500, 0.5).then((resizedImage) => {
-        setImage(resizedImage);
+  
+    let newImage = image;
+  
+    if (image.size > 0) {
+      console.log('Image size is too large, resizing...');
+      const resizedImage = await resizeImage(image, 500, 500, 0.5);
+      newImage = new File([resizedImage], image.name, {
+        type: image.type,
+        lastModified: Date.now(),
       });
     }
-
+  
+    setImage(newImage);
+  
     const storageRef = getStorage();
     const imagePath = `images/${image.name + v4()}`;
     const imageRef = ref(storageRef, imagePath);
-
+  
     // Delete the previously stored image
     if (imageurl !== '') {
       const previousImageRef = ref(storageRef, imageurl);
@@ -95,9 +102,9 @@ function ProductInformation() {
           console.error('Error deleting previous image: ', error);
         });
     }
-
+  
     // Upload the new image
-    const uploadTask = uploadBytesResumable(imageRef, image);
+    const uploadTask = uploadBytesResumable(imageRef, newImage);
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -107,10 +114,10 @@ function ProductInformation() {
         console.error('Error uploading image: ', error);
       },
       () => {
-        getDownloadURL(imageRef).then((url) => {
-          setImageurl(url);
+        getDownloadURL(imageRef).then(async (url) => {
           console.log(imageurl);
           alert('Image uploaded successfully');
+          setImageurl(url);
         }).then(() => {
           setImagePath(imagePath);
         });
