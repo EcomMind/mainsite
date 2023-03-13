@@ -19,6 +19,7 @@ function Ads() {
   const [productDescriptionLong, setProductDescriptionLong] = useState('');
   const [subprojects, setSubprojects] = useState([]);
   const [imagePath, setImagePath] = useState('');
+  const [bgColor, setBgColor] = useState("white");
   const [image, setImage] = useState(null);
   const [imageurl, setImageUrl] = useState('');
   const [imageNoBG, setImageNoBG] = useState(null);
@@ -26,6 +27,7 @@ function Ads() {
   const projectRef = doc(collection(db, 'projects'), projectId);
   const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
   const adsInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Advertising Generator');
+  const colors = ["white", "red", "blue", "green", "yellow", "orange", "purple", "pink", "brown", "gray", "black"];
   let returnStatement = "";
   let message = "";
   let data2 = "";
@@ -69,6 +71,7 @@ function Ads() {
             setProductDescriptionShort(doc.data().content[0]);
             setProductDescriptionLong(doc.data().content[1]);
             setImageNoBgUrl(doc.data().content[2]);
+            setBgColor(doc.data().content[3]);
         }
     });
     return () => unsubscribe();
@@ -77,7 +80,7 @@ function Ads() {
   const handleSave = async (event) => {   
       event.preventDefault();
       try {
-          await updateDoc(adsInformationSubProjectRef, { content: [productDescriptionShort, productDescriptionLong, imageNoBgUrl] });
+          await updateDoc(adsInformationSubProjectRef, { content: [productDescriptionShort, productDescriptionLong, imageNoBgUrl, bgColor] });
       } catch (error) {
           console.error('Error updating document: ', error);
       }
@@ -216,6 +219,11 @@ function Ads() {
     );
   };
 
+  function handleBgColorChange(event) {
+    setBgColor(event.target.value);
+  }
+
+  
 
   // da return
   return (
@@ -239,9 +247,18 @@ function Ads() {
       </form>
       {/* a button with the text "get image" that calls the getImage function */}
       <button onClick={getImage}>Get Image</button>
-      <div>
+      <div style={{ backgroundColor: bgColor }}>
         {imageNoBgUrl ? <img src={imageNoBgUrl} alt=""/> : null}
       </div>
+      
+      <select value={bgColor} onChange={handleBgColorChange}>
+        {colors.map((color) => (
+          <option key={color} value={color}>
+            {color}
+          </option>
+        ))}
+      </select>
+
       <button type="submit" onClick={handleSave}>save text</button>
       {subprojects.map((subproject) => (
         <div key={subproject.id}>
