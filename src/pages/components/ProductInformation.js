@@ -68,9 +68,16 @@ function ProductInformation() {
   const handleImageUpload = () => {
     if (image == null) return;
 
-    if (image.size > 1000000) {
+    if (image.size > 10000000) {
       alert('Image size is too large');
       return;
+    }
+    
+    if(image.size > 1000000){
+      console.log('Image size is too large, resizing...')
+      resizeImage(image, 500, 500, 0.5).then((resizedImage) => {
+        setImage(resizedImage);
+      });
     }
 
     const storageRef = getStorage();
@@ -110,6 +117,50 @@ function ProductInformation() {
       }
     );
   };
+
+  const resizeImage = async (file, maxWidth, maxHeight, quality) => {
+    return new Promise(async (resolve, reject) => {
+      const reader = new FileReader();
+      await reader.readAsDataURL(file);
+      reader.onload = function (event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = async function () {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+  
+          let width = img.width;
+          let height = img.height;
+  
+          // Calculate new dimensions to fit within maxWidth and maxHeight
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+  
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+          console.log(width, height)
+          canvas.width = width;
+          canvas.height = height;
+  
+          // Draw the image on the canvas with the new dimensions
+          await ctx.drawImage(img, 0, 0, width, height);
+  
+          // Convert canvas to blob and resolve with the new file
+          canvas.toBlob(async (blob) => {
+            console.log(blob);
+            await resolve(new File([blob], file.name, { type: file.type, lastModified: file.lastModified }));
+          }, file.type, quality);
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  }
+
 
   const projectLinks = {
     "Email Marketing Generator": "/Email/",

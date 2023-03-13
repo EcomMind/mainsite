@@ -152,7 +152,7 @@ function Ads() {
   
     // Create a FormData object to send the file
     const formData = new FormData();
-    formData.append('image', imageFile);
+    await formData.append('image', imageFile);
   
     // Set the API key in the headers
     const headers = new Headers();
@@ -179,17 +179,14 @@ function Ads() {
     })
     .catch(error => {
       console.error('Error sending image to API:', error);
-    });
-
-    
+    });    
   }
 
-  
   const handleImageUpload = () => {
     console.log('Uploading image');
     if (imageNoBG == null) return;
 
-    if (imageNoBG.size > 1000000) {
+    if (imageNoBG.size > 10000000) {
       alert('Image size is too large');
       return;
     }
