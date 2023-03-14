@@ -5,7 +5,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import {v4} from 'uuid'
 import styles from '../styles/Ads.module.css';
 
