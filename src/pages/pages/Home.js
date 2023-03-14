@@ -83,41 +83,66 @@ function Home() {
     }
   };
 
+
   if (user) {
     // User is signed in
     return (
       <div>
-        <div className={styles.header}>
-          <Link to ='/Aboutus'>
-            <button className={styles.button}>About Us</button>
-          </Link>
-          <Link to ='/Pricing'>
-            <button className={styles.button}>Pricing</button>
-          </Link>
-          <Link to ='/Contactus'>
-            <button className={styles.button}>Contact Us</button>
-          </Link>
-          <img src={ecommind} alt="ecommind" className={styles.logo}/>
-          <Link to="/Profile">
-            <button className={styles.button}>Profile</button>
-          </Link>
-        </div>
-        <hr/>
-        <div className={styles.main}>
-          <h1 className={styles.title}>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
-          {/* display projects */}
-                    
-          {projects.map((project) => (
-            <div key={project.id}>
-              <h2>
-                <Link to={`/ProductInformation/${project.id}`}>
-                  {project.projectName}
-                </Link>
-              </h2>
+
+        {/* This is the header */}
+        <div class={styles.ecommindheader}>
+          <div>
+            <img src={ecommind} alt="ecommind" className={styles.headerlogo}/>
+          </div>
+          <nav class={styles.nav}>
+            <Link to ='/Aboutus'>
+              <button className={styles.button1}>About Us</button>
+            </Link>
+            <Link to ='/Pricing'>
+              <button className={styles.button1}>Pricing</button>
+            </Link>
+            <Link to ='/Contactus'>
+              <button className={styles.button1}>Contact Us</button>
+            </Link>
+            <div>
+              {/* profile button here*/}
+              <button className={styles.button1}></button>
             </div>
-          ))}
-          {/* button to create a new project */}
-          <button onClick={handleCreateProject}>Create New Project</button>
+          </nav>
+        </div>
+
+        {/* This is main body content */}
+        <div className={styles.mainbodycontent}>
+          <div class={styles.leftpurplebar}>
+          </div>
+          <div class={styles.sidebarleft}>
+            <Link to ='/Home'>
+              <button className={styles.button2}>Products</button>
+            </Link>
+            <Link to ='src/pages/components/Ads'>
+              <button className={styles.button2}>Marketing Content</button>
+            </Link>
+            <Link to ='/Contactus'>
+              <button className={styles.button2}>Email Builder</button>
+            </Link>
+          </div>
+          <div class={styles.productgallerycontent}>
+            <div className={styles.mainbodytitle}>
+              <h1>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
+            </div>
+            {/* display projects */}                
+                {projects.map((project) => (
+              <div key={project.id}>
+                <h2>
+                  <Link to={`/ProductInformation/${project.id}`}>
+                    {project.projectName}
+                  </Link>
+                </h2>
+              </div>
+            ))}
+            {/* Create a product */}
+            <button onClick={handleCreateProject}>Create New Project</button>
+          </div>
         </div>
       </div>
     )
