@@ -5,11 +5,13 @@ import { Link } from 'react-router-dom';
 import { auth, db } from '../../firebase';
 import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
 import { useNavigate } from 'react-router-dom';
+import ProductDisplay from '../components/productDisplay';
 
 function Home() {
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const collectionRef = collection(db, 'projects');
+
   const nav = useNavigate();
 
   useEffect(() => {
@@ -49,6 +51,15 @@ function Home() {
         await addDoc(collectionRef, {
           userId: user.uid,
           projectName: 'New Project',
+          projectIndustry: '',
+          projectAudience: '',
+          offering: '',
+          userDescription: '',
+          productPrice: '',
+          shortdescription: '',
+          longdescription: '',
+          imageNoBGUrl: '',
+          imageNoBGPath: '',
         })
           .then(async (docRef) => {
             // add a new subproject to the project
@@ -90,11 +101,11 @@ function Home() {
       <div>
 
         {/* This is the header */}
-        <div class={styles.ecommindheader}>
+        <div className={styles.ecommindheader}>
           <div>
             <img src={ecommind} alt="ecommind" className={styles.headerlogo}/>
           </div>
-          <nav class={styles.nav}>
+          <nav className={styles.nav}>
             <Link to ='/Aboutus'>
               <button className={styles.button1}>About Us</button>
             </Link>
@@ -113,31 +124,36 @@ function Home() {
 
         {/* This is main body content */}
         <div className={styles.mainbodycontent}>
-          <div class={styles.leftpurplebar}>
+          <div className={styles.leftpurplebar}>
           </div>
-          <div class={styles.sidebarleft}>
+          <div className={styles.sidebarleft}>
             <Link to ='/Home'>
               <button className={styles.button2}>Products</button>
             </Link>
-            <Link to ='src/pages/components/Ads'>
+            <Link to ='/Ads'>
               <button className={styles.button2}>Marketing Content</button>
             </Link>
-            <Link to ='/Contactus'>
+            <Link to ='/Email'>
               <button className={styles.button2}>Email Builder</button>
             </Link>
           </div>
-          <div class={styles.productgallerycontent}>
+          <div className={styles.productgallerycontent}>
             <div className={styles.mainbodytitle}>
               <h1>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
             </div>
             {/* display projects */}                
-                {projects.map((project) => (
+            {projects.map((project) => (
+              // get project id, imageURL, name, description from firebase
+              
+
               <div key={project.id}>
-                <h2>
+                
+                {/* <h2>
                   <Link to={`/ProductInformation/${project.id}`}>
                     {project.projectName}
                   </Link>
-                </h2>
+                </h2> */}
+                <ProductDisplay id={project.id}/>
               </div>
             ))}
             {/* Create a product */}

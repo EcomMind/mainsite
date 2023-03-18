@@ -73,11 +73,11 @@ const router = createBrowserRouter([
     element: <ProductInformation/>
   },
   {
-    path: "Ads/:projectId",
+    path: "Ads/",
     element: <Ads/>
   },
   {
-    path: "Email/:projectId",
+    path: "Email/",
     element: <Email/>
   },
   {
