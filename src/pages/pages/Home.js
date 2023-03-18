@@ -6,6 +6,7 @@ import { auth, db } from '../../firebase';
 import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
 import { useNavigate } from 'react-router-dom';
 import ProductDisplay from '../components/productDisplay';
+import NewProject from '../components/NewProject';
 
 function Home() {
   const [user, setUser] = useState(null);
@@ -117,7 +118,7 @@ function Home() {
             </Link>
             <div>
               {/* profile button here*/}
-              <button className={styles.button1}></button>
+              
             </div>
           </nav>
         </div>
@@ -148,9 +149,12 @@ function Home() {
                   <ProductDisplay id={project.id} />
                 </div>
               ))}
+              <div className={styles.projects}>
+              <button className={styles.containerBut} onClick={handleCreateProject}>
+                <NewProject/>
+              </button>
+              </div>
             </div>
-            {/* Create a product */}
-            <button onClick={handleCreateProject}>Create New Project</button>
           </div>
         </div>
       </div>
