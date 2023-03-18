@@ -142,20 +142,13 @@ function Home() {
               <h1>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
             </div>
             {/* display projects */}                
-            {projects.map((project) => (
-              // get project id, imageURL, name, description from firebase
-              
-
-              <div key={project.id}>
-                
-                {/* <h2>
-                  <Link to={`/ProductInformation/${project.id}`}>
-                    {project.projectName}
-                  </Link>
-                </h2> */}
-                <ProductDisplay id={project.id}/>
-              </div>
-            ))}
+            <div className={styles.projectsContainer}>
+              {projects.map((project) => (
+                <div key={project.id} className={styles.projects}>
+                  <ProductDisplay id={project.id} />
+                </div>
+              ))}
+            </div>
             {/* Create a product */}
             <button onClick={handleCreateProject}>Create New Project</button>
           </div>

@@ -162,6 +162,19 @@ etc...
   margin: 0 auto;
 } 
 
+.projectsContainer {
+  /* width: fit-content; */
+  display: flex;
+  flex-direction: row; 
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.projects {
+  width: calc(33.33% - 10px);
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
 /*
 .links{
   padding-right: 5%;
