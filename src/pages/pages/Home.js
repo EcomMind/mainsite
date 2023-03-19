@@ -195,12 +195,24 @@ function Home() {
               <ProductInformation projectId={currentProjectID} goHome={handleGoToHome} />
             </div>
           ) : (
+            
             <div>
               <div>
-                <h1>Other component that gets called goes here</h1>
+                {page === 'ads' && (
+                  <div>
+                    <h1>ads</h1>
+                  </div>
+                )}
+
+                {page === 'email' && (
+                  <div>
+                    <h1>email</h1>
+                  </div>
+                )}
               </div>
               <div>
                 {/* render the components on the side of the screen */}
+                <h1>render</h1>
               </div>
             </div>
           )}  
