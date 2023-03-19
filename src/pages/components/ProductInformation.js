@@ -11,7 +11,7 @@ import {v4} from 'uuid'
 import { useNavigate } from "react-router-dom";
 import {ProductDisplay} from './productDisplay'
 
-function ProductInformation({ projectId }) {
+function ProductInformation({ projectId, goHome }) {
   const navigate = useNavigate();
   console.log(projectId)
   const [projectName, setProjectName] = useState('');
@@ -54,7 +54,9 @@ function ProductInformation({ projectId }) {
           console.error('Error updating document: ', error);
       }
       alert('Saved!');
-      navigate('/home');
+      // navigate('/home');
+      goHome();
+      // try and set a global function that changes the page state
   };  
 
   async function createShortDescription(e){

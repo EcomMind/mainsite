@@ -42,10 +42,12 @@ function Home() {
         setProjects([]);
       }
     });
+
+    
     return () => {
       unsubscribe();
     };
-  }, [user]);
+  }, [user, page]);
 
   const handleCreateProject = async () => {
     if (user) {
@@ -88,7 +90,7 @@ function Home() {
                 subprojectName: 'Email Marketing Generator',
                 content: [],
               });
-            nav('/ProductInformation/' + docRef.id)
+            handleModifyProject(docRef.id);
           })
           .catch((error) => {
             console.error('Error adding document: ', error);
@@ -190,8 +192,7 @@ function Home() {
           </div>
           ) : page === 'productInfo' ?(
             <div>
-              <ProductInformation projectId={currentProjectID} />
-
+              <ProductInformation projectId={currentProjectID} goHome={handleGoToHome} />
             </div>
           ) : (
             <div>
