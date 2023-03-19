@@ -9,9 +9,9 @@ import { Link } from 'react-router-dom';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import {v4} from 'uuid'
 import { useNavigate } from "react-router-dom";
-import styles from './productDisplay.module.css'
+import styles from './ProductDisplayMain.module.css'
 
-function ProductDisplay({ id, name, imageUrl, description }) {
+function ProductDisplayMain({ id, name, imageUrl, description }) {
     const [tempImageURL, setTempImageURL] = useState('');
     const [tempName, setTempName] = useState('');
     const [tempDescription, setTempDescription] = useState('');
@@ -29,17 +29,17 @@ function ProductDisplay({ id, name, imageUrl, description }) {
       }, []);
     
     return (
-      // <Link to={`/ProductInformation/${id}`}>
-        
+      
+        <div className={styles.container}>
           <div style={{ border: "1px solid black", padding: "10px", margin: "10px" }}>
             <h2>{tempName}</h2>
             <img src={tempImageURL} alt={tempName} style={{ width: "50%", height: "auto", marginBottom: "10px" }} />
             <p>{tempDescription.substring(0, 100) + '...'}</p>
           </div>
-        // </button>
-      // </Link>
+        </div>
+      
     );
   
 }
 
-export default ProductDisplay
+export default ProductDisplayMain

@@ -7,10 +7,13 @@ import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } f
 import { useNavigate } from 'react-router-dom';
 import ProductDisplay from '../components/productDisplay';
 import NewProject from '../components/NewProject';
+import ProductInformation from '../components/ProductInformation';
 
 function Home() {
   const [user, setUser] = useState(null);
+  const [page, setPage] = useState('home');
   const [projects, setProjects] = useState([]);
+  const [currentProject, setCurrentProject] = useState(null);
   const collectionRef = collection(db, 'projects');
 
   const nav = useNavigate();
@@ -95,6 +98,27 @@ function Home() {
     }
   };
 
+  const handleModifyProject = async (project) => {
+    await new Promise(resolve => setCurrentProject(project, resolve));
+    console.log(currentProject);
+    setPage('productInfo')
+  }
+
+  const handleGoToHome = () => {
+    setPage('home');
+    console.log(page);
+  }
+
+  const handleGoToAds = () => {
+    setPage('ads');
+    console.log(page);
+  }
+
+  const handleGoToEmail = () => {
+    setPage('email');
+    console.log(page);
+  }
+
 
   if (user) {
     // User is signed in
@@ -128,34 +152,47 @@ function Home() {
           <div className={styles.leftpurplebar}>
           </div>
           <div className={styles.sidebarleft}>
-            <Link to ='/Home'>
-              <button className={styles.button2}>Products</button>
-            </Link>
-            <Link to ='/Ads'>
-              <button className={styles.button2}>Marketing Content</button>
-            </Link>
-            <Link to ='/Email'>
-              <button className={styles.button2}>Email Builder</button>
-            </Link>
+          <button className={styles.button2} onClick={handleGoToHome}>Products</button>
+          <button className={styles.button2} onClick={handleGoToAds}>Marketing Content</button>
+          <button className={styles.button2} onClick={handleGoToEmail}>Email Builder</button>
           </div>
+          {page === 'home' ? (
           <div className={styles.productgallerycontent}>
             <div className={styles.mainbodytitle}>
               <h1>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
             </div>
-            {/* display projects */}                
-            <div className={styles.projectsContainer}>
-              {projects.map((project) => (
-                <div key={project.id} className={styles.projects}>
-                  <ProductDisplay id={project.id} />
+            {/* display projects */}
+            
+              <div className={styles.projectsContainer}>
+                {projects.map((project) => (
+                  <div key={project.id} className={styles.projects}>
+                    <button className={styles.buttonContainer} onClick={() => handleModifyProject(project.id)}>
+                      <ProductDisplay id={project.id} />
+                    </button>
+                    
+                  </div>
+                ))}
+                <div className={styles.projects}>
+                <button className={styles.containerBut} onClick={handleCreateProject}>
+                  <NewProject/>
+                </button>
                 </div>
-              ))}
-              <div className={styles.projects}>
-              <button className={styles.containerBut} onClick={handleCreateProject}>
-                <NewProject/>
-              </button>
+              </div>
+          </div>
+          ) : page === 'productInfo' ?(
+            <div>
+              <ProductInformation id={currentProject}/>
+            </div>
+          ) : (
+            <div>
+              <div>
+                <h1>Other component that gets called goes here</h1>
+              </div>
+              <div>
+                {/* render the components on the side of the screen */}
               </div>
             </div>
-          </div>
+          )}  
         </div>
       </div>
     )
