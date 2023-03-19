@@ -11,9 +11,9 @@ import {v4} from 'uuid'
 import { useNavigate } from "react-router-dom";
 import {ProductDisplay} from './productDisplay'
 
-function ProductInformation({id}) {
+function ProductInformation({ projectId }) {
   const navigate = useNavigate();
-  const { projectId } = id;
+  console.log(projectId)
   const [projectName, setProjectName] = useState('');
   const [projectIndustry, setProjectIndustry] = useState('');
   const [projectAudience, setProjectAudience] = useState('');

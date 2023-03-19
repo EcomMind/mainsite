@@ -13,7 +13,7 @@ function Home() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState('home');
   const [projects, setProjects] = useState([]);
-  const [currentProject, setCurrentProject] = useState(null);
+  const [currentProjectID, setCurrentProjectID] = useState('');
   const collectionRef = collection(db, 'projects');
 
   const nav = useNavigate();
@@ -98,11 +98,20 @@ function Home() {
     }
   };
 
-  const handleModifyProject = async (project) => {
-    await new Promise(resolve => setCurrentProject(project, resolve));
-    console.log(currentProject);
-    setPage('productInfo')
-  }
+  const handleModifyProject = async (projectID) => {
+    await new Promise(resolve => {
+      setCurrentProjectID(projectID);
+      resolve();
+    });
+  };
+  
+  useEffect(() => {
+    if (currentProjectID !== '') {
+      console.log(currentProjectID);
+      setPage('productInfo');
+      
+    }
+  }, [currentProjectID]);
 
   const handleGoToHome = () => {
     setPage('home');
@@ -181,7 +190,8 @@ function Home() {
           </div>
           ) : page === 'productInfo' ?(
             <div>
-              <ProductInformation id={currentProject}/>
+              <ProductInformation projectId={currentProjectID} />
+
             </div>
           ) : (
             <div>
