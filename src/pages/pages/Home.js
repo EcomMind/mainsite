@@ -6,6 +6,7 @@ import { auth, db } from '../../firebase';
 import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
 import { useNavigate } from 'react-router-dom';
 import ProductDisplay from '../components/productDisplay';
+import ProductDisplayMain from '../components/ProductDisplayMain';
 import NewProject from '../components/NewProject';
 import ProductInformation from '../components/ProductInformation';
 
@@ -134,7 +135,7 @@ function Home() {
   if (user) {
     // User is signed in
     return (
-      <div>
+      <div className={styles.Container}>
 
         {/* This is the header */}
         <div className={styles.ecommindheader}>
@@ -167,6 +168,7 @@ function Home() {
           <button className={styles.button2} onClick={handleGoToAds}>Marketing Content</button>
           <button className={styles.button2} onClick={handleGoToEmail}>Email Builder</button>
           </div>
+          <div>
           {page === 'home' ? (
           <div className={styles.productgallerycontent}>
             <div className={styles.mainbodytitle}>
@@ -180,7 +182,6 @@ function Home() {
                     <button className={styles.buttonContainer} onClick={() => handleModifyProject(project.id)}>
                       <ProductDisplay id={project.id} />
                     </button>
-                    
                   </div>
                 ))}
                 <div className={styles.projects}>
@@ -194,28 +195,32 @@ function Home() {
             <div>
               <ProductInformation projectId={currentProjectID} goHome={handleGoToHome} />
             </div>
-          ) : (
-            
-            <div>
-              <div>
-                {page === 'ads' && (
-                  <div>
-                    <h1>ads</h1>
-                  </div>
-                )}
-
-                {page === 'email' && (
-                  <div>
-                    <h1>email</h1>
-                  </div>
-                )}
-              </div>
-              <div>
-                {/* render the components on the side of the screen */}
-                <h1>render</h1>
-              </div>
+          ) : page == 'ads' ?(
+            <div className={styles.ads}>
+              <h1>ads</h1>
             </div>
+          ) : page === 'email' ?(                  
+            <div>
+              <h1>email</h1>
+            </div>
+          ) : (
+            <div></div>
           )}  
+          </div>
+            {/* <div> */}
+              {page === 'ads' ? (
+                <div className={styles.projectsMain}>
+                  <h1>render</h1>
+                  {projects.map((project) => (
+                    <div key={project.id} className={styles.projects}>
+                      <ProductDisplayMain id={project.id} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div></div>
+              )}
+            {/* </div> */}
         </div>
       </div>
     )

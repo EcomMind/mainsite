@@ -40,6 +40,10 @@ etc...
     width: 20%;
 }
 
+.container {
+  width: 100%;
+}
+
 .ecommindheader {
   /*border: 1px solid red;*/
   border-bottom: 1px solid #B897F8;
@@ -118,7 +122,6 @@ etc...
   flex-direction: row;
   position: relative;
   z-index: 0;
-  /*background: rgb(255,0,0,0.15);*/
 }
 
 .leftpurplebar {
@@ -155,7 +158,9 @@ etc...
 
   /*border: 1px solid red;*/
 }
-
+.ads {
+  flex: 0 0 80%;
+}
 .buttonContainer {
   border: 0;
   background-color: white;
@@ -180,11 +185,25 @@ etc...
   flex-direction: row; 
   justify-content: flex-start;
   flex-wrap: wrap;
+  flex: 1;
 }
 .projects {
   width: calc(33.33% - 10px);
   margin-right: 10px;
   margin-bottom: 20px;
+}
+.projectsMain {
+
+  display: flex;
+  flex-direction: column;
+  /* margin-left: auto; */
+  align-items: center;
+  /* align-self: flex-end; */
+  /* align-self: self-end; */
+  /* margin-left: auto;
+  width: 30%; */
+  
+
 }
 .containerBut {
   border: 0;
