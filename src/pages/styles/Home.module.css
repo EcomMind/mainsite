@@ -153,12 +153,12 @@ etc...
   flex-direction: column;
   padding: 2%;
 
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .mainbodytitle {
   display: block;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   margin: 0 auto;
 } 
 

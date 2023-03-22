@@ -38,12 +38,28 @@ function Login() {
 
   return (
     <div>
-    <img src={ecommind} alt="ecommind" className={styles.logo2}/>
+      {/* This is the header */}
+        <div class={styles.ecommindheader}>
+          <div>
+            <img src={ecommind} alt="ecommind" className={styles.headerlogo}/>
+          </div>
+          <nav class={styles.nav}>
+            <Link to ='/Aboutus'>
+              <button className={styles.button1}>About Us</button>
+            </Link>
+            <Link to ='/Pricing'>
+              <button className={styles.button1}>Pricing</button>
+            </Link>
+            <Link to ='/Contactus'>
+              <button className={styles.button1}>Contact Us</button>
+            </Link>
+          </nav>
+        </div>
     <div className={styles.container}>
-      <div>
-      <h1>Log In!</h1>
+      
+      <div class={styles.mainbodycontent}>
+      <h1 class={styles.title}>Log In!</h1>
       <form onSubmit={handleSubmit}>
-        <br />
         <label>
           <input
             type="email"
@@ -53,7 +69,6 @@ function Login() {
             onChange={(event) => setEmail(event.target.value)}
           />
         </label>
-        <br />
         <label>
           <input
             type="text"
@@ -63,13 +78,12 @@ function Login() {
             onChange={(event) => setPassword(event.target.value)}
           />
         </label>
-        <br />
-        <button className={styles.button} type="submit" onClick={handleSubmit}>Login</button>
+        <button className={styles.button1} type="submit" onClick={handleSubmit}>Login</button>
     </form>
-    <hr />
-    <button className={styles.button} type="submit" onClick={handleSubmit}>Signin with Google</button>
-    <h3 className={styles.footer}>Dont Have an Account? <Link to='/Signup' className={styles.link}>Sign Up!</Link></h3>
-    <h3 className={styles.footer}>Forgot Your Password? <Link to='/Forgotpassword' className={styles.link}>Reset it here</Link></h3>
+    <div>
+      <h3 className={styles.footer}>Dont Have an Account? <Link to='/Signup' className={styles.link}>Sign Up!</Link></h3>
+      <h3 className={styles.footer}>Forgot Your Password? <Link to='/Forgotpassword' className={styles.link}>Reset it here</Link></h3>
+    </div>
     </div>
     </div>
     </div>
