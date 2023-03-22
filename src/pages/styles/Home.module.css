@@ -32,7 +32,7 @@ etc...
   flex-wrap: nowrap;
   margin: 0px;
   padding: 0px;
-  /*border: 1px solid red;*/
+  /* border: 1px solid red; */
   border-image: initial;
 }
 
@@ -159,7 +159,8 @@ etc...
   /*border: 1px solid red;*/
 }
 .ads {
-  flex: 0 0 80%;
+  width: 50%;
+  border: 1px solid red;
 }
 .buttonContainer {
   border: 0;
@@ -180,7 +181,7 @@ etc...
 } 
 
 .projectsContainer {
-  /* width: fit-content; */
+  width: fit-content;
   display: flex;
   flex-direction: row; 
   justify-content: flex-start;
@@ -188,21 +189,18 @@ etc...
   flex: 1;
 }
 .projects {
-  width: calc(33.33% - 10px);
-  margin-right: 10px;
-  margin-bottom: 20px;
+  width: 30%;
 }
+
 .projectsMain {
 
   display: flex;
   flex-direction: column;
-  /* margin-left: auto; */
   align-items: center;
-  /* align-self: flex-end; */
-  /* align-self: self-end; */
-  /* margin-left: auto;
-  width: 30%; */
-  
+  border: 1px solid blue;
+  position: absolute;
+  right: 0;
+  width: 20%;
 
 }
 .containerBut {

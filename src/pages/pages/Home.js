@@ -168,7 +168,6 @@ function Home() {
           <button className={styles.button2} onClick={handleGoToAds}>Marketing Content</button>
           <button className={styles.button2} onClick={handleGoToEmail}>Email Builder</button>
           </div>
-          <div>
           {page === 'home' ? (
           <div className={styles.productgallerycontent}>
             <div className={styles.mainbodytitle}>
@@ -206,11 +205,9 @@ function Home() {
           ) : (
             <div></div>
           )}  
-          </div>
-            {/* <div> */}
+            {/* <div className='sidebarright'> */}
               {page === 'ads' ? (
                 <div className={styles.projectsMain}>
-                  <h1>render</h1>
                   {projects.map((project) => (
                     <div key={project.id} className={styles.projects}>
                       <ProductDisplayMain id={project.id} />
