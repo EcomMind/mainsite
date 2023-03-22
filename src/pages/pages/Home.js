@@ -5,11 +5,18 @@ import { Link } from 'react-router-dom';
 import { auth, db } from '../../firebase';
 import { addDoc, collection, where, query, set, setDoc, getDocs, getDoc, doc } from "@firebase/firestore"
 import { useNavigate } from 'react-router-dom';
+import ProductDisplay from '../components/productDisplay';
+import ProductDisplayMain from '../components/ProductDisplayMain';
+import NewProject from '../components/NewProject';
+import ProductInformation from '../components/ProductInformation';
 
 function Home() {
   const [user, setUser] = useState(null);
+  const [page, setPage] = useState('home');
   const [projects, setProjects] = useState([]);
+  const [currentProjectID, setCurrentProjectID] = useState('');
   const collectionRef = collection(db, 'projects');
+
   const nav = useNavigate();
 
   useEffect(() => {
@@ -36,10 +43,12 @@ function Home() {
         setProjects([]);
       }
     });
+
+    
     return () => {
       unsubscribe();
     };
-  }, [user]);
+  }, [user, page]);
 
   const handleCreateProject = async () => {
     if (user) {
@@ -49,6 +58,15 @@ function Home() {
         await addDoc(collectionRef, {
           userId: user.uid,
           projectName: 'New Project',
+          projectIndustry: '',
+          projectAudience: '',
+          offering: '',
+          userDescription: '',
+          productPrice: '',
+          shortdescription: '',
+          longdescription: '',
+          imageNoBGUrl: '',
+          imageNoBGPath: '',
         })
           .then(async (docRef) => {
             // add a new subproject to the project
@@ -73,7 +91,7 @@ function Home() {
                 subprojectName: 'Email Marketing Generator',
                 content: [],
               });
-            nav('/ProductInformation/' + docRef.id)
+            handleModifyProject(docRef.id);
           })
           .catch((error) => {
             console.error('Error adding document: ', error);
@@ -83,18 +101,48 @@ function Home() {
     }
   };
 
+  const handleModifyProject = async (projectID) => {
+    await new Promise(resolve => {
+      setCurrentProjectID(projectID);
+      resolve();
+    });
+  };
+  
+  useEffect(() => {
+    if (currentProjectID !== '') {
+      console.log(currentProjectID);
+      setPage('productInfo');
+      
+    }
+  }, [currentProjectID]);
+
+  const handleGoToHome = () => {
+    setPage('home');
+    console.log(page);
+  }
+
+  const handleGoToAds = () => {
+    setPage('ads');
+    console.log(page);
+  }
+
+  const handleGoToEmail = () => {
+    setPage('email');
+    console.log(page);
+  }
+
 
   if (user) {
     // User is signed in
     return (
-      <div>
+      <div className={styles.Container}>
 
         {/* This is the header */}
-        <div class={styles.ecommindheader}>
+        <div className={styles.ecommindheader}>
           <div>
             <img src={ecommind} alt="ecommind" className={styles.headerlogo}/>
           </div>
-          <nav class={styles.nav}>
+          <nav className={styles.nav}>
             <Link to ='/Aboutus'>
               <button className={styles.button1}>About Us</button>
             </Link>
@@ -106,43 +154,73 @@ function Home() {
             </Link>
             <div>
               {/* profile button here*/}
-              <button className={styles.button1}></button>
+              
             </div>
           </nav>
         </div>
 
         {/* This is main body content */}
         <div className={styles.mainbodycontent}>
-          <div class={styles.leftpurplebar}>
+          <div className={styles.leftpurplebar}>
           </div>
-          <div class={styles.sidebarleft}>
-            <Link to ='/Home'>
-              <button className={styles.button2}>Products</button>
-            </Link>
-            <Link to ='src/pages/components/Ads'>
-              <button className={styles.button2}>Marketing Content</button>
-            </Link>
-            <Link to ='/Contactus'>
-              <button className={styles.button2}>Email Builder</button>
-            </Link>
+          <div className={styles.sidebarleft}>
+          <button className={styles.button2} onClick={handleGoToHome}>Products</button>
+          <button className={styles.button2} onClick={handleGoToAds}>Marketing Content</button>
+          <button className={styles.button2} onClick={handleGoToEmail}>Email Builder</button>
           </div>
-          <div class={styles.productgallerycontent}>
+          <div>
+          {page === 'home' ? (
+          <div className={styles.productgallerycontent}>
             <div className={styles.mainbodytitle}>
               <h1>Welcome, <span className={styles.userName}>{user.displayName}</span></h1>
             </div>
-            {/* display projects */}                
+            {/* display projects */}
+            
+              <div className={styles.projectsContainer}>
                 {projects.map((project) => (
-              <div key={project.id}>
-                <h2>
-                  <Link to={`/ProductInformation/${project.id}`}>
-                    {project.projectName}
-                  </Link>
-                </h2>
+                  <div key={project.id} className={styles.projects}>
+                    <button className={styles.buttonContainer} onClick={() => handleModifyProject(project.id)}>
+                      <ProductDisplay id={project.id} />
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.projects}>
+                <button className={styles.containerBut} onClick={handleCreateProject}>
+                  <NewProject/>
+                </button>
+                </div>
               </div>
-            ))}
-            {/* Create a product */}
-            <button onClick={handleCreateProject}>Create New Project</button>
           </div>
+          ) : page === 'productInfo' ?(
+            <div>
+              <ProductInformation projectId={currentProjectID} goHome={handleGoToHome} />
+            </div>
+          ) : page == 'ads' ?(
+            <div className={styles.ads}>
+              <h1>ads</h1>
+            </div>
+          ) : page === 'email' ?(                  
+            <div>
+              <h1>email</h1>
+            </div>
+          ) : (
+            <div></div>
+          )}  
+          </div>
+            {/* <div> */}
+              {page === 'ads' ? (
+                <div className={styles.projectsMain}>
+                  <h1>render</h1>
+                  {projects.map((project) => (
+                    <div key={project.id} className={styles.projects}>
+                      <ProductDisplayMain id={project.id} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div></div>
+              )}
+            {/* </div> */}
         </div>
       </div>
     )

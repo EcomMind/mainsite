@@ -1,69 +1,106 @@
+import React from 'react'
 import { useState } from 'react';
 import { collection, doc, updateDoc } from 'firebase/firestore';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { db, storage } from '../../firebase';
 import { Link } from 'react-router-dom';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import {v4} from 'uuid'
+import { useNavigate } from "react-router-dom";
+import {ProductDisplay} from './productDisplay'
 
-function ProductInformation() {
-  const { projectId } = useParams();
+function ProductInformation({ projectId, goHome }) {
+  const navigate = useNavigate();
+  console.log(projectId)
   const [projectName, setProjectName] = useState('');
   const [projectIndustry, setProjectIndustry] = useState('');
   const [projectAudience, setProjectAudience] = useState('');
-  const [projectDescription, setProjectDescription] = useState('');
-  const [projectProductDescription, setProjectProductDescription] = useState('');
-  const [subprojects, setSubprojects] = useState([]);
+  const [projectOffering, setProjectOffering] = useState('');
+  const [userDescription, setUserDescription] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
+  const [longDescription, setLongDescription] = useState('');
   const [image, setImage] = useState(null);
-  const [imagePath2, setImagePath] = useState('');
+  const [imagePath, setImagePath] = useState('');
   const [imageurl, setImageurl] = useState('');
+  
   const projectRef = doc(collection(db, 'projects'), projectId);
-  const productInformationSubProjectRef = doc(collection(projectRef, 'subprojects'), 'Product Information');
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(projectRef, 'subprojects'), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setSubprojects(data);
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(projectRef, (doc) => {
       if (doc.exists()) {
         setProjectName(doc.data().projectName);
+        setProjectIndustry(doc.data().projectIndustry);
+        setProjectAudience(doc.data().projectAudience);
+        setProjectOffering(doc.data().offering);
+        setUserDescription(doc.data().userDescription);
+        setProductPrice(doc.data().productPrice);
+        setShortDescription(doc.data().shortdescription);
+        setLongDescription(doc.data().longdescription);
+        setImageurl(doc.data().imageNoBGUrl);
+        setImagePath(doc.data().imageNoBGPath);
       }
     });
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(productInformationSubProjectRef, (doc) => {  
-        if (doc.exists()) {
-            setProjectIndustry(doc.data().content[0]);
-            setProjectAudience(doc.data().content[1]);
-            setProjectDescription(doc.data().content[2]);
-            setProjectProductDescription(doc.data().content[3]);
-            setImageurl(doc.data().content[4]);
-        }
-    });
-    return () => unsubscribe();
-    }, []);
-
   const handleSave = async (event) => {   
-      event.preventDefault();
+      // get long and short description from gpt api
       try {
-          await updateDoc(projectRef, { projectName: projectName });
-          await updateDoc(productInformationSubProjectRef, { content: [projectIndustry, projectAudience, projectDescription, projectProductDescription, imageurl, imagePath2] });
+          await updateDoc(projectRef, { projectName: projectName, projectIndustry: projectIndustry, projectAudience: projectAudience, offering: projectOffering, userDescription: userDescription, productPrice: productPrice, shortdescription: shortDescription, longdescription: longDescription, imageNoBGUrl: imageurl, imageNoBGPath: imagePath});
       } catch (error) {
           console.error('Error updating document: ', error);
       }
+      alert('Saved!');
+      // navigate('/home');
+      goHome();
+      // try and set a global function that changes the page state
   };  
+
+  async function createShortDescription(e){
+    e.preventDefault();
+    const messageShort = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectOffering + ". The product description should include some of the following: " + userDescription + ". The name of the product is " + projectName + ". This should be 1 paragraph long.";
+    await processMessageToChatGPT(messageShort, 100).then((result) => {
+        setShortDescription(result);
+    }
+    );
+    console.log(shortDescription)
+  }
+
+  async function createLongDescription(e){
+    e.preventDefault();
+    const messageLong = "Create a product description for a " + projectIndustry + " product that is targeted towards " + projectAudience + ". The product is offering " + projectOffering + ". The product description should include some of the following: " + userDescription + ". The name of the product is " + projectName + ". This should be 2-3 longer paragraphs long.";
+    await processMessageToChatGPT(messageLong, 300).then((result) => {
+        setLongDescription(result);
+    }
+    );
+    console.log(longDescription)
+  }
+    
+
+  async function processMessageToChatGPT(message, max_tokens){
+    // console.log(process.env.REACT_APP_gptkey)
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + process.env.REACT_APP_gptkey
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{role:'system', content:message}],
+        max_tokens: max_tokens,
+        n: 1,
+        
+      })
+    });
+    const data = await response.json();
+    // console.log(data.choices[0].message.content);
+    return data.choices[0].message.content;
+  }
+
 
   const handleImageUpload = async () => {
     if (!image) return;
@@ -76,6 +113,8 @@ function ProductInformation() {
   
     let newImage = image;
   
+    // resize the image
+  
     if (image.size > 0) {
       console.log('Image size is too large, resizing...');
       const resizedImage = await resizeImage(image, 500, 500, 0.5);
@@ -85,7 +124,9 @@ function ProductInformation() {
       });
     }
   
-    setImage(newImage);
+    //get image without background
+    console.log("removing background")
+    const imageWithoutBackground = await removeBackground(newImage);
   
     const storageRef = getStorage();
     const imagePath = `images/${image.name + v4()}`;
@@ -104,7 +145,7 @@ function ProductInformation() {
     }
   
     // Upload the new image
-    const uploadTask = uploadBytesResumable(imageRef, newImage);
+    const uploadTask = uploadBytesResumable(imageRef, imageWithoutBackground);
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -118,13 +159,12 @@ function ProductInformation() {
           console.log(imageurl);
           alert('Image uploaded successfully');
           setImageurl(url);
-        }).then(() => {
           setImagePath(imagePath);
         });
       }
     );
   };
-
+  
   const resizeImage = async (file, maxWidth, maxHeight, quality) => {
     return new Promise(async (resolve, reject) => {
       const reader = new FileReader();
@@ -169,14 +209,35 @@ function ProductInformation() {
       reader.onerror = reject;
     });
   }
-
-
-  const projectLinks = {
-    "Email Marketing Generator": "/Email/",
-    "Advertising Generator": "/Ads/",
-    "Social Media Content Generator": "/Social/",
-    "Website Generator": "/Web/",
-    "Product Information": "/ProductInformation/"
+  
+  const removeBackground = (imageFile) => {
+    return new Promise(async (resolve, reject) => {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      
+      const headers = new Headers();
+      headers.append('Authorization', 'my-secret-key');
+      
+      fetch('http://localhost:5000/remove-background', {
+        method: 'POST',
+        headers: headers,
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Bad request');
+        }
+        return response.blob();
+      })
+      .then(async blob => {
+        await resolve(new File([blob], imageFile.name, { type: imageFile.type, lastModified: imageFile.lastModified }));
+      })
+      .catch(error => {
+        //reject if error
+        reject();
+        console.error('Error sending image to API:', error);
+      });  
+    });  
   };
   
   return (
@@ -197,24 +258,37 @@ function ProductInformation() {
         </label>
         <label>
           What are you offering? (Physical goods, services, etc.):
-          <input type="text" value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} />
+          <input type="text" value={projectOffering} onChange={(e) => setProjectOffering(e.target.value)} />
         </label>
         <label>
           Product Description (3 sentences max):
-          <input type="text" value={projectProductDescription} onChange={(e) => setProjectProductDescription(e.target.value)} />
+          <input type="text" value={userDescription} onChange={(e) => setUserDescription(e.target.value)} />
         </label>
-        <button type="submit" onClick={handleSave}>Save</button>
+        <label>
+          What is the price of your product?:
+          <input type="text" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} />
+        </label>
       </form>
+      <form>
+        <label>
+          Short Description
+          <input type="text" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} />
+        </label>
+        <button onClick={createShortDescription}>Regenerate Short Description</button>
+        <br/>
+        <label>
+          Long Description
+          <input type="text" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} />
+        </label>
+        <button onClick={createLongDescription}>Regenerate Long Description</button>
+      </form>
+
       <input type="file" onChange={(event) => {setImage(event.target.files[0])}} />
       <button onClick={handleImageUpload}>Upload</button>
       <div>
         {imageurl ? <img src={imageurl} alt=""/> : null}
       </div>
-      {subprojects.map((subproject) => (
-        <div key={subproject.id}>
-          <Link to={`${projectLinks[subproject.subprojectName]}${projectId}`}>{subproject.subprojectName}</Link>
-        </div>
-      ))}
+      <button type="submit" onClick={handleSave}>Save</button>
     </div>
   );
 }
