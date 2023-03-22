@@ -212,7 +212,12 @@ function Home() {
                 <div className={styles.projectsMain}>
                   <h1>render</h1>
                   {projects.map((project) => (
-                    <div key={project.id} className={styles.projects}>
+                    <div key={project.id} className={styles.projects}
+                    draggable="true"
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("text/plain", "dragged-item");
+                      e.dataTransfer.effectAllowed = "all";
+                    }}>
                       <ProductDisplayMain id={project.id} />
                     </div>
                   ))}
