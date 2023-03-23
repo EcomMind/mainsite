@@ -9,12 +9,15 @@ import ProductDisplay from '../components/productDisplay';
 import ProductDisplayMain from '../components/ProductDisplayMain';
 import NewProject from '../components/NewProject';
 import ProductInformation from '../components/ProductInformation';
+import Ads from '../components/Ads';
 
 function Home() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState('home');
   const [projects, setProjects] = useState([]);
   const [currentProjectID, setCurrentProjectID] = useState('');
+  const [currentProject, setCurrentProject] = useState('');
+  
   const collectionRef = collection(db, 'projects');
 
   const nav = useNavigate();
@@ -49,6 +52,11 @@ function Home() {
       unsubscribe();
     };
   }, [user, page]);
+
+  const handleSetCurrentProject = (project) => {
+    setCurrentProject(project);
+    // console.log(currentProject)
+  };
 
   const handleCreateProject = async () => {
     if (user) {
@@ -107,10 +115,10 @@ function Home() {
       resolve();
     });
   };
-  
+
   useEffect(() => {
     if (currentProjectID !== '') {
-      console.log(currentProjectID);
+      // console.log(currentProjectID);
       setPage('productInfo');
       
     }
@@ -120,6 +128,7 @@ function Home() {
     setPage('home');
     console.log(page);
   }
+
 
   const handleGoToAds = () => {
     setPage('ads');
@@ -194,12 +203,15 @@ function Home() {
             <div>
               <ProductInformation projectId={currentProjectID} goHome={handleGoToHome} />
             </div>
-          ) : page == 'ads' ?(
+          ) : page === 'ads' && currentProject ?(
+            
             <div className={styles.ads}>
-              <h1>ads</h1>
+              {/* <h1>ads</h1> */}
+              <Ads projectId={currentProject.id}/>
             </div>
           ) : page === 'email' ?(                  
             <div>
+              {/* <h1>email</h1> */}
               <h1>email</h1>
             </div>
           ) : (
@@ -208,16 +220,18 @@ function Home() {
             {/* <div className='sidebarright'> */}
               {page === 'ads' ? (
                 <div className={styles.projectsMain}>
-                  {projects.map((project) => (
-                    <div key={project.id} className={styles.projects}
-                    draggable="true"
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("text/plain", "dragged-item");
-                      e.dataTransfer.effectAllowed = "all";
-                    }}>
+                {projects.map((project) => (
+                  <button key={project.id} onClick={() => handleSetCurrentProject(project)}>
+                    <div
+                      key={project.id}
+                      className={`${styles.projects} ${
+                        currentProject.id === project.id ? styles.selected : ""
+                      }`}
+                    >
                       <ProductDisplayMain id={project.id} />
                     </div>
-                  ))}
+                  </button>
+                ))}
                 </div>
               ) : (
                 <div></div>

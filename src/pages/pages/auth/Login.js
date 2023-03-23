@@ -39,11 +39,11 @@ function Login() {
   return (
     <div>
       {/* This is the header */}
-        <div class={styles.ecommindheader}>
+        <div className={styles.ecommindheader}>
           <div>
             <img src={ecommind} alt="ecommind" className={styles.headerlogo}/>
           </div>
-          <nav class={styles.nav}>
+          <nav className={styles.nav}>
             <Link to ='/Aboutus'>
               <button className={styles.button1}>About Us</button>
             </Link>
@@ -57,8 +57,8 @@ function Login() {
         </div>
     <div className={styles.container}>
       
-      <div class={styles.mainbodycontent}>
-      <h1 class={styles.title}>Log In!</h1>
+      <div className={styles.mainbodycontent}>
+      <h1 className={styles.title}>Log In!</h1>
       <form onSubmit={handleSubmit}>
         <label>
           <input

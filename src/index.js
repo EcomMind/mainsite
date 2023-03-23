@@ -17,7 +17,7 @@ import Temp from './pages/pages/Temp';
 import AboutUs from './pages/pages/AboutUs';
 import Pricing from './pages/pages/Pricing';
 import ContactUs from './pages/pages/ContactUs';
-import Ads from './pages/components/Ads';
+// import Ads from './pages/components/Ads';
 import Email from './pages/components/Email';
 import ProductInformation from './pages/components/ProductInformation';
 import Social from './pages/components/Social';
@@ -72,10 +72,10 @@ const router = createBrowserRouter([
     path: "ProductInformation/:projectId",
     element: <ProductInformation/>
   },
-  {
-    path: "Ads/",
-    element: <Ads/>
-  },
+  // {
+  //   path: "Ads/",
+  //   element: <Ads/>
+  // },
   {
     path: "Email/",
     element: <Email/>
